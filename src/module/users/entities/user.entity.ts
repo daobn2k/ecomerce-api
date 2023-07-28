@@ -1,5 +1,3 @@
-import { ObjectId } from 'mongoose';
-
 export class User {
   username: string;
   password: string;
