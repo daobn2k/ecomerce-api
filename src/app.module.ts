@@ -4,6 +4,7 @@ import { MulterModule } from '@nestjs/platform-express';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CategoriesModule } from './module/categories/categories.module';
+import { OrderModule } from './module/order/order.module';
 import { ProductsModule } from './module/products/products.module';
 import { UploadfileModule } from './module/uploadfile/uploadfile.module';
 import { UsersModule } from './module/users/users.module';
@@ -16,6 +17,7 @@ import { UsersModule } from './module/users/users.module';
     CategoriesModule,
     UploadfileModule,
     MulterModule.register({ dest: './uploads' }),
+    OrderModule,
   ],
   controllers: [AppController],
   providers: [AppService],
