@@ -5,7 +5,7 @@ import { User } from 'src/module/users/entities/user.entity';
 import { Category } from 'src/module/categories/entities/category.entity';
 
 export type UserDocument = Product & Document;
-@Schema()
+@Schema({ timestamps: true })
 export class Product {
   @Prop({ required: true, type: String, maxlength: 256 })
   name: string;

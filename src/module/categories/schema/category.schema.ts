@@ -5,7 +5,7 @@ import { User } from 'src/module/users/entities/user.entity';
 
 export type UserDocument = Category & Document;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Category {
   @Prop({ required: true, type: String, maxlength: 256 })
   name: string;

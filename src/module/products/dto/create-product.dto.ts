@@ -23,6 +23,9 @@ export class CreateProductDto {
 
   @ApiProperty({ required: true, default: '1', type: String })
   status: string;
+
+  @ApiProperty({ required: false })
+  create_date: Date;
 }
 
 export class QueryListProducts {
