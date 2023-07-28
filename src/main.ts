@@ -1,12 +1,18 @@
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
+import * as path from 'path';
 import { AppModule } from './app.module';
 import { ErrorsInterceptor } from './interceptors/error.interceptor';
 import { LoggerInterceptor } from './interceptors/logger.interceptor';
 import { HttpExceptionFilter } from './utils/http-exception.utils';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { cors: true });
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    cors: true,
+  });
+
+  app.useStaticAssets(path.join(__dirname, '../files'));
 
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalInterceptors(new LoggerInterceptor(), new ErrorsInterceptor());
