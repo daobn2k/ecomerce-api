@@ -13,8 +13,8 @@ export class Product {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Category' })
   category_id: Category;
 
-  @Prop({ required: true, type: String, maxlength: 256 })
-  price: string;
+  @Prop({ required: true, type: Number })
+  price: number;
 
   @Prop({ required: true, type: Number })
   size: number;
@@ -25,7 +25,7 @@ export class Product {
   @Prop({ required: true, type: String })
   origin: string;
 
-  @Prop({ required: true, type: Number, maxlength: 256 })
+  @Prop({ required: true, type: Number })
   quantity: number;
 
   //   0 hết hàng , 1 đang thực hiện , 2 khóa //

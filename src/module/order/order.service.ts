@@ -7,15 +7,22 @@ import { CreateOrderDto, QueryListOrder } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { Order } from './entities/order.entity';
 import { isEmpty } from 'lodash';
+import { Product } from '../products/entities/product.entity';
 @Injectable()
 export class OrderService {
   constructor(
     @InjectModel(Order.name) private orderModel: Model<Order>,
     @InjectModel(Voucher.name) private voucherModel: Model<Voucher>,
+    @InjectModel(Product.name) private productModel: Model<Product>,
   ) {}
 
   async create(createOrderDto: CreateOrderDto) {
     try {
+      let total_price = 0;
+      const total_quantity = createOrderDto.items.reduce((p: any, v: any) => {
+        return p.quantity + v.quantity;
+      });
+
       if (!isEmpty(createOrderDto.voucher_code)) {
         const checkVoucher = await this.voucherModel
           .findOne({
@@ -27,7 +34,40 @@ export class OrderService {
           return handlingError('Mã giảm giá không tồn tại', null);
         }
       }
-      const createdOrder = new this.orderModel(createOrderDto);
+
+      if (createOrderDto.items.length > 0) {
+        for (let index = 0; index < createOrderDto.items.length; index++) {
+          const element: any = createOrderDto.items[index];
+
+          const currentProd = await this.productModel.findOne({
+            _id: element.product,
+          });
+          if (!currentProd)
+            return handlingError(
+              `Mã sản phẩm ${element.product} không tồn tại`,
+              null,
+            );
+
+          const newQuantity: number = currentProd.quantity - element.quantity;
+          if (newQuantity < 0)
+            return handlingError(
+              `Số lượng sản phẩm ${currentProd.name} không đủ đáp ứng`,
+              null,
+            );
+          await this.productModel.findOneAndUpdate(
+            { _id: element.product },
+            { quantity: newQuantity },
+            { new: true },
+          );
+
+          total_price += currentProd.price * element.quantity;
+        }
+      }
+      const createdOrder = new this.orderModel({
+        ...createOrderDto,
+        total_quantity,
+        total_price,
+      });
       const result = await createdOrder.save();
       await this.voucherModel.findOneAndUpdate(
         { code: rgx(createOrderDto.voucher_code) },

@@ -17,9 +17,9 @@ export class Order {
   @Prop()
   items: [OrderItemDocument];
 
-  @Prop({ type: Number, default: 0, required: true })
+  @Prop({ type: Number, default: 1 })
   total_quantity: number;
-  @Prop({ required: true, type: Number, default: 0 })
+  @Prop({ type: Number, default: 0 })
   total_price: number;
 
   @Prop({ required: true, type: String, maxLength: 3000, default: '' })

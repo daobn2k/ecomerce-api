@@ -14,7 +14,7 @@ export class CreateProductDto {
   create_uid: ObjectId;
   @ApiProperty({ required: true })
   origin: string;
-  @ApiProperty({ required: true, default: 0 })
+  @ApiProperty({ required: true, default: 0, type: Number })
   quantity: number;
   @ApiProperty({ required: true })
   coverImage: string;

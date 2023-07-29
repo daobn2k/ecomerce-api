@@ -6,9 +6,9 @@ import { StatusOrder } from '../schema/order.schema';
 export class CreateOrderDto {
   @ApiProperty({ required: true, default: [], type: Array })
   items: ProductDocument[];
-  @ApiProperty({ required: true, default: 0, type: Number })
+  @ApiProperty({ default: 1, type: Number })
   total_quantity: number;
-  @ApiProperty({ required: true, default: 0, type: Number })
+  @ApiProperty({ default: 0, type: Number })
   total_price: number;
   @ApiProperty({ required: true, default: '', type: String })
   shipping_address: string;
