@@ -2,18 +2,38 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { handlingError, rgx } from 'src/utils/function.utils';
+import { Voucher } from '../voucher/entities/voucher.entity';
 import { CreateOrderDto, QueryListOrder } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { Order } from './entities/order.entity';
-
+import { isEmpty } from 'lodash';
 @Injectable()
 export class OrderService {
-  constructor(@InjectModel(Order.name) private orderModel: Model<Order>) {}
+  constructor(
+    @InjectModel(Order.name) private orderModel: Model<Order>,
+    @InjectModel(Voucher.name) private voucherModel: Model<Voucher>,
+  ) {}
 
   async create(createOrderDto: CreateOrderDto) {
     try {
+      if (!isEmpty(createOrderDto.voucher_code)) {
+        const checkVoucher = await this.voucherModel
+          .findOne({
+            code: rgx(createOrderDto.voucher_code),
+          })
+          .exec();
+
+        if (!checkVoucher) {
+          return handlingError('Mã giảm giá không tồn tại', null);
+        }
+      }
       const createdOrder = new this.orderModel(createOrderDto);
       const result = await createdOrder.save();
+      await this.voucherModel.findOneAndUpdate(
+        { code: rgx(createOrderDto.voucher_code) },
+        { status: false },
+        { new: true },
+      );
       return {
         data: result,
         result: 'RESULT',

@@ -8,6 +8,7 @@ import { OrderModule } from './module/order/order.module';
 import { ProductsModule } from './module/products/products.module';
 import { UploadfileModule } from './module/uploadfile/uploadfile.module';
 import { UsersModule } from './module/users/users.module';
+import { VoucherModule } from './module/voucher/voucher.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { UsersModule } from './module/users/users.module';
     UploadfileModule,
     MulterModule.register({ dest: './uploads' }),
     OrderModule,
+    VoucherModule,
   ],
   controllers: [AppController],
   providers: [AppService],

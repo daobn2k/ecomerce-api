@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { handlingError, rgx } from 'src/utils/function.utils';
+import {
+  generateRandomString,
+  handlingError,
+  rgx,
+} from 'src/utils/function.utils';
 import { CreateVoucherDto, QueryListVoucher } from './dto/create-voucher.dto';
 import { UpdateVoucherDto } from './dto/update-voucher.dto';
 import { Voucher } from './entities/voucher.entity';
@@ -13,7 +17,10 @@ export class VoucherService {
   ) {}
   async create(CreateVoucherDto: CreateVoucherDto) {
     try {
-      const createdUser = new this.voucherModel(CreateVoucherDto);
+      const createdUser = new this.voucherModel({
+        ...CreateVoucherDto,
+        code: generateRandomString(),
+      });
       const result = await createdUser.save();
       return {
         data: result,
