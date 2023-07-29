@@ -2,9 +2,9 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import * as mongoose from 'mongoose';
 import { User } from 'src/module/users/entities/user.entity';
-import { Product } from 'src/module/products/entities/product.entity';
+import { OrderItemDocument } from './orderItem.schema';
 
-export type UserDocument = Order & Document;
+export type OrderDocument = Order & Document;
 
 export enum StatusOrder {
   Pending = 'Pending',
@@ -14,8 +14,8 @@ export enum StatusOrder {
 
 @Schema({ timestamps: true })
 export class Order {
-  @Prop({ type: Array<mongoose.Schema.Types.ObjectId>, ref: 'Product' })
-  products: Array<Product>;
+  @Prop()
+  items: [OrderItemDocument];
 
   @Prop({ type: Number, default: 0, required: true })
   total_quantity: number;
@@ -32,6 +32,8 @@ export class Order {
   })
   status: string;
 
+  @Prop({ type: String })
+  voucher_code: string;
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
   create_uid: User;
 }

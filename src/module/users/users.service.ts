@@ -45,8 +45,8 @@ export class UsersService {
   }
 
   async findAll(query: QueryListUsers) {
-    const { page = 1, perPage = 20, keyword = '' } = query;
-    const skip: number = (page - 1) * perPage;
+    const { page = 1, limit = 20, keyword = '' } = query;
+    const skip: number = (page - 1) * limit;
 
     const listQuery: queryUsers = {};
 
@@ -56,14 +56,18 @@ export class UsersService {
     try {
       const res = await this.userModel
         .find(listQuery)
-        .limit(+perPage)
+        .limit(+limit)
         .skip(skip)
         .sort({ create_date: -1 })
         .exec();
 
+      const count = await this.userModel.find(listQuery).count().exec();
       return {
         result: 'SUCCESS',
         data: res,
+        totalItems: count,
+        page: +page,
+        limit: +limit,
       };
     } catch (error) {}
   }

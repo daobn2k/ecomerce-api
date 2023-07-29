@@ -32,8 +32,8 @@ export class CategoriesService {
   }
 
   async findAll(query: QueryListCategories) {
-    const { page = 1, perPage = 20, keyword = '' } = query;
-    const skip: number = (page - 1) * perPage;
+    const { page = 1, limit = 20, keyword = '' } = query;
+    const skip: number = (page - 1) * limit;
 
     const listQuery: queryCategories = {};
 
@@ -43,7 +43,7 @@ export class CategoriesService {
     try {
       const res = await this.categoryModel
         .find(listQuery)
-        .limit(+perPage)
+        .limit(+limit)
         .populate('create_uid')
         .skip(skip)
         .sort({ create_date: -1 })

@@ -25,8 +25,8 @@ export class OrderService {
   }
 
   async findAll(query: QueryListOrder) {
-    const { page = 1, perPage = 20, keyword = '' } = query;
-    const skip: number = (page - 1) * perPage;
+    const { page = 1, limit = 20, keyword = '' } = query;
+    const skip: number = (page - 1) * limit;
 
     const listQuery: any = {};
 
@@ -36,16 +36,24 @@ export class OrderService {
     try {
       const res = await this.orderModel
         .find(listQuery)
-        .limit(+perPage)
+        .populate('create_uid')
+        .populate({ path: 'items.product', model: 'Product' })
+        .limit(+limit)
         .skip(skip)
         .sort({ create_date: -1 })
         .exec();
 
+      const count = await this.orderModel.find(listQuery).count().exec();
       return {
         result: 'SUCCESS',
         data: res,
+        totalItems: count,
+        page: +page,
+        limit: +limit,
       };
-    } catch (error) {}
+    } catch (error) {
+      handlingError('Đã có lỗi xảy ra khi lấy danh sách đơn hàng', error);
+    }
   }
 
   async update(id: string, UpdateOrderDto: UpdateOrderDto) {
@@ -69,7 +77,11 @@ export class OrderService {
 
   async findOne(id: string) {
     try {
-      const result = await this.orderModel.findById(id).exec();
+      const result = await this.orderModel
+        .findById(id)
+        .populate('create_uid')
+        .populate({ path: 'items.product', model: 'Product' })
+        .exec();
       return {
         result: 'SUCCESS',
         data: result,

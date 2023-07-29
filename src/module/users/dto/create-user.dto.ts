@@ -51,7 +51,7 @@ export class QueryListUsers {
   page: number;
 
   @ApiProperty({ required: false })
-  perPage: number;
+  limit: number;
 
   @ApiProperty({ required: false, type: String })
   keyword: string;

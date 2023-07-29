@@ -4,7 +4,7 @@ import * as mongoose from 'mongoose';
 import { User } from 'src/module/users/entities/user.entity';
 import { Category } from 'src/module/categories/entities/category.entity';
 
-export type UserDocument = Product & Document;
+export type ProductDocument = Product & Document;
 @Schema({ timestamps: true })
 export class Product {
   @Prop({ required: true, type: String, maxlength: 256 })
