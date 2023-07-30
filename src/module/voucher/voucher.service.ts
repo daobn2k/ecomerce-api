@@ -6,6 +6,8 @@ import {
   handlingError,
   rgx,
 } from 'src/utils/function.utils';
+import { MailService } from '../mail/mail.service';
+import { UsersService } from '../users/users.service';
 import { CreateVoucherDto, QueryListVoucher } from './dto/create-voucher.dto';
 import { UpdateVoucherDto } from './dto/update-voucher.dto';
 import { Voucher } from './entities/voucher.entity';
@@ -14,14 +16,33 @@ import { Voucher } from './entities/voucher.entity';
 export class VoucherService {
   constructor(
     @InjectModel(Voucher.name) private voucherModel: Model<Voucher>,
+    private readonly mailService: MailService,
+    private readonly userService: UsersService,
   ) {}
   async create(CreateVoucherDto: CreateVoucherDto) {
     try {
+      const code = generateRandomString();
+      const checkUser = await this.userService.findOne(
+        String(CreateVoucherDto.recive_uid),
+      );
+
+      if (!checkUser) return handlingError('Người nhận không tồn tại', null);
+
       const createdUser = new this.voucherModel({
         ...CreateVoucherDto,
-        code: generateRandomString(),
+        code,
       });
+
       const result = await createdUser.save();
+
+      if (result) {
+        await this.mailService.sendEmail({
+          to: checkUser.data.email,
+          subject: result.name,
+          content: `Gửi tặng bạn mã voucher: ${result.code} với ưu đãi cực khủng giám giá tới ${result.discount}%`,
+        });
+      }
+
       return {
         data: result,
         result: 'RESULT',
@@ -48,7 +69,7 @@ export class VoucherService {
         .populate('recive_uid')
         .limit(+limit)
         .skip(skip)
-        .sort({ create_date: -1 })
+        .sort({ createdAt: -1 })
         .exec();
 
       const count = await this.voucherModel.find(listQuery).count().exec();

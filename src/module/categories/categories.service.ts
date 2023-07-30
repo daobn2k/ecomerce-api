@@ -46,7 +46,7 @@ export class CategoriesService {
         .limit(+limit)
         .populate('create_uid')
         .skip(skip)
-        .sort({ create_date: -1 })
+        .sort({ createdAt: -1 })
         .exec();
 
       return {

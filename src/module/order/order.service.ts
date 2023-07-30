@@ -8,12 +8,16 @@ import { UpdateOrderDto } from './dto/update-order.dto';
 import { Order } from './entities/order.entity';
 import { isEmpty } from 'lodash';
 import { Product } from '../products/entities/product.entity';
+import { MailService } from '../mail/mail.service';
+import { UsersService } from '../users/users.service';
 @Injectable()
 export class OrderService {
   constructor(
     @InjectModel(Order.name) private orderModel: Model<Order>,
     @InjectModel(Voucher.name) private voucherModel: Model<Voucher>,
     @InjectModel(Product.name) private productModel: Model<Product>,
+    private readonly mailService: MailService,
+    private readonly userService: UsersService,
   ) {}
 
   async create(createOrderDto: CreateOrderDto) {
@@ -35,45 +39,60 @@ export class OrderService {
         }
       }
 
-      if (createOrderDto.items.length > 0) {
-        for (let index = 0; index < createOrderDto.items.length; index++) {
-          const element: any = createOrderDto.items[index];
-
-          const currentProd = await this.productModel.findOne({
-            _id: element.product,
-          });
-          if (!currentProd)
-            return handlingError(
-              `Mã sản phẩm ${element.product} không tồn tại`,
-              null,
-            );
-
-          const newQuantity: number = currentProd.quantity - element.quantity;
-          if (newQuantity < 0)
-            return handlingError(
-              `Số lượng sản phẩm ${currentProd.name} không đủ đáp ứng`,
-              null,
-            );
-          await this.productModel.findOneAndUpdate(
-            { _id: element.product },
-            { quantity: newQuantity },
-            { new: true },
-          );
-
-          total_price += currentProd.price * element.quantity;
-        }
-      }
       const createdOrder = new this.orderModel({
         ...createOrderDto,
         total_quantity,
         total_price,
       });
       const result = await createdOrder.save();
-      await this.voucherModel.findOneAndUpdate(
-        { code: rgx(createOrderDto.voucher_code) },
-        { status: false },
-        { new: true },
-      );
+      if (result) {
+        if (createOrderDto.items.length > 0) {
+          for (let index = 0; index < createOrderDto.items.length; index++) {
+            const element: any = createOrderDto.items[index];
+
+            const currentProd = await this.productModel.findOne({
+              _id: element.product,
+            });
+            if (!currentProd)
+              return handlingError(
+                `Mã sản phẩm ${element.product} không tồn tại`,
+                null,
+              );
+
+            const newQuantity: number = currentProd.quantity - element.quantity;
+            if (newQuantity < 0)
+              return handlingError(
+                `Số lượng sản phẩm ${currentProd.name} không đủ đáp ứng`,
+                null,
+              );
+            await this.productModel.findOneAndUpdate(
+              { _id: element.product },
+              { quantity: newQuantity },
+              { new: true },
+            );
+
+            total_price += currentProd.price * element.quantity;
+          }
+        }
+        await this.voucherModel.findOneAndUpdate(
+          { code: rgx(createOrderDto.voucher_code) },
+          { status: false },
+          { new: true },
+        );
+
+        const findCreateUid = await this.userService.findOne(
+          String(createOrderDto.create_uid),
+        );
+        if (!findCreateUid)
+          return handlingError('Người dùng không tồn tại', null);
+        await this.mailService.sendEmail({
+          to: findCreateUid.data.email,
+          subject: 'Tạo mới đơn hàng thành công',
+          content:
+            'Đơn hàng của bạn đã tạo thành công, chúng tôi sẽ liên hệ với bộ phận giao hàng gửi cho bạn trong thời gian sớm nhất vui lòng chờ từ 2-3 ngày',
+        });
+      }
+
       return {
         data: result,
         result: 'RESULT',
@@ -100,7 +119,7 @@ export class OrderService {
         .populate({ path: 'items.product', model: 'Product' })
         .limit(+limit)
         .skip(skip)
-        .sort({ create_date: -1 })
+        .sort({ createdAt: -1 })
         .exec();
 
       const count = await this.orderModel.find(listQuery).count().exec();

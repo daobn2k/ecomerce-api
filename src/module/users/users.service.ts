@@ -58,7 +58,7 @@ export class UsersService {
         .find(listQuery)
         .limit(+limit)
         .skip(skip)
-        .sort({ create_date: -1 })
+        .sort({ createdAt: -1 })
         .exec();
 
       const count = await this.userModel.find(listQuery).count().exec();

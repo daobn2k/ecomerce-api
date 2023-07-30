@@ -11,7 +11,7 @@ export class OrderItem {
   @Prop({ type: Number, default: 1, required: true })
   quantity: number;
 
-  @Prop({ type: Number, default: 0, required: true })
+  @Prop({ type: Number, default: 0 })
   price: number;
 }
 export const OrderItemSchema = SchemaFactory.createForClass(OrderItem);

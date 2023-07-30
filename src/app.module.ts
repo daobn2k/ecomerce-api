@@ -4,12 +4,12 @@ import { MulterModule } from '@nestjs/platform-express';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CategoriesModule } from './module/categories/categories.module';
+import { MailModule } from './module/mail/mail.module';
 import { OrderModule } from './module/order/order.module';
 import { ProductsModule } from './module/products/products.module';
 import { UploadfileModule } from './module/uploadfile/uploadfile.module';
 import { UsersModule } from './module/users/users.module';
 import { VoucherModule } from './module/voucher/voucher.module';
-
 @Module({
   imports: [
     MongooseModule.forRoot('mongodb://127.0.0.1/ecommerce'),
@@ -20,6 +20,7 @@ import { VoucherModule } from './module/voucher/voucher.module';
     MulterModule.register({ dest: './uploads' }),
     OrderModule,
     VoucherModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [AppService],
