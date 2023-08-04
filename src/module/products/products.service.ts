@@ -18,7 +18,7 @@ export class ProductsService {
       const result = await createdUser.save();
       return {
         data: result,
-        result: 'RESULT',
+        result: 'SUCCESS',
         message: 'Tạo mới sản phẩm thành công',
       };
     } catch (error) {

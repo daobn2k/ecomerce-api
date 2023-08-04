@@ -13,9 +13,6 @@ export class User {
   @Prop({ required: true, type: String, maxlength: 256 })
   name: string;
 
-  @Prop({ default: Date.now() })
-  dob: Date;
-
   @Prop({ required: true, type: String })
   gender: string;
 

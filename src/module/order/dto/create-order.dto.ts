@@ -4,6 +4,8 @@ import { ProductDocument } from 'src/module/products/schema/product.schema';
 import { StatusOrder } from '../schema/order.schema';
 
 export class CreateOrderDto {
+  @ApiProperty({ required: false, default: '', type: String })
+  code: string;
   @ApiProperty({ required: true, default: [], type: Array })
   items: ProductDocument[];
   @ApiProperty({ default: 1, type: Number })

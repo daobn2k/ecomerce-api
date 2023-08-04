@@ -16,11 +16,11 @@ export class Product {
   @Prop({ required: true, type: Number })
   price: number;
 
-  @Prop({ required: true, type: Number })
-  size: number;
+  // @Prop({ required: true, type: Number })
+  // size: number;
 
-  @Prop({ required: true, type: String, maxlength: 256 })
-  color: string;
+  // @Prop({ required: true, type: String, maxlength: 256 })
+  // color: string;
 
   @Prop({ required: true, type: String })
   origin: string;
@@ -38,6 +38,9 @@ export class Product {
 
   @Prop()
   coverImage: string;
+
+  @Prop({ type: String, default: '', required: true })
+  description: string;
 
   @Prop({ type: Array, default: [] })
   images: Array<string>;

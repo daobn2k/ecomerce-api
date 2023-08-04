@@ -4,7 +4,6 @@ export class CreateUserDto {
   username: string;
   password: string;
   name: string;
-  dob: Date;
   address: string;
   email: string;
   avatar: string;
@@ -21,19 +20,17 @@ export class PropertyCreateUser {
   password: string;
   @ApiProperty({ required: true })
   name: string;
-  @ApiProperty({ required: false })
-  dob: Date;
   @ApiProperty({ required: true })
   email: string;
   @ApiProperty({ required: true })
   address: string;
   @ApiProperty({ required: true })
   gender: string;
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, default: '' })
   avatar: string;
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, default: 'USER' })
   role: string;
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, default: false })
   status: boolean;
   @ApiProperty({ required: true })
   phone: string;

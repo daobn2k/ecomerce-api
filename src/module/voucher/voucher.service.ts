@@ -45,7 +45,7 @@ export class VoucherService {
 
       return {
         data: result,
-        result: 'RESULT',
+        result: 'SUCCESS',
         message: 'Tạo mới mã ưu đãi thành công',
       };
     } catch (error) {

@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { handlingError, rgx } from 'src/utils/function.utils';
+import {
+  generateRandomString,
+  handlingError,
+  rgx,
+} from 'src/utils/function.utils';
 import { Voucher } from '../voucher/entities/voucher.entity';
 import { CreateOrderDto, QueryListOrder } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
@@ -23,9 +27,11 @@ export class OrderService {
   async create(createOrderDto: CreateOrderDto) {
     try {
       let total_price = 0;
-      const total_quantity = createOrderDto.items.reduce((p: any, v: any) => {
-        return p.quantity + v.quantity;
-      });
+      const total_quantity = createOrderDto.items
+        .map((i) => i.quantity)
+        .reduce((p: any, v: any) => {
+          return p + v;
+        }, 0);
 
       if (!isEmpty(createOrderDto.voucher_code)) {
         const checkVoucher = await this.voucherModel
@@ -39,41 +45,45 @@ export class OrderService {
         }
       }
 
-      const createdOrder = new this.orderModel({
+      if (createOrderDto.items.length > 0) {
+        for (let index = 0; index < createOrderDto.items.length; index++) {
+          const element: any = createOrderDto.items[index];
+
+          const currentProd = await this.productModel.findOne({
+            _id: element.product,
+          });
+          if (!currentProd)
+            return handlingError(
+              `Mã sản phẩm ${element.product} không tồn tại`,
+              null,
+            );
+
+          const newQuantity: number = currentProd.quantity - element.quantity;
+          if (newQuantity < 0)
+            return handlingError(
+              `Số lượng sản phẩm ${currentProd.name} không đủ đáp ứng`,
+              null,
+            );
+          await this.productModel.findOneAndUpdate(
+            { _id: element.product },
+            { quantity: newQuantity },
+            { new: true },
+          );
+
+          total_price += currentProd.price * element.quantity;
+        }
+      }
+
+      const payload = {
         ...createOrderDto,
         total_quantity,
         total_price,
-      });
+        code: `YANG-${generateRandomString()}`,
+      };
+      const createdOrder = new this.orderModel(payload);
+
       const result = await createdOrder.save();
       if (result) {
-        if (createOrderDto.items.length > 0) {
-          for (let index = 0; index < createOrderDto.items.length; index++) {
-            const element: any = createOrderDto.items[index];
-
-            const currentProd = await this.productModel.findOne({
-              _id: element.product,
-            });
-            if (!currentProd)
-              return handlingError(
-                `Mã sản phẩm ${element.product} không tồn tại`,
-                null,
-              );
-
-            const newQuantity: number = currentProd.quantity - element.quantity;
-            if (newQuantity < 0)
-              return handlingError(
-                `Số lượng sản phẩm ${currentProd.name} không đủ đáp ứng`,
-                null,
-              );
-            await this.productModel.findOneAndUpdate(
-              { _id: element.product },
-              { quantity: newQuantity },
-              { new: true },
-            );
-
-            total_price += currentProd.price * element.quantity;
-          }
-        }
         await this.voucherModel.findOneAndUpdate(
           { code: rgx(createOrderDto.voucher_code) },
           { status: false },
@@ -85,19 +95,24 @@ export class OrderService {
         );
         if (!findCreateUid)
           return handlingError('Người dùng không tồn tại', null);
+        console.log(123, '123');
+        console.log(findCreateUid, 'findCreateUid');
+
         await this.mailService.sendEmail({
           to: findCreateUid.data.email,
           subject: 'Tạo mới đơn hàng thành công',
           content:
             'Đơn hàng của bạn đã tạo thành công, chúng tôi sẽ liên hệ với bộ phận giao hàng gửi cho bạn trong thời gian sớm nhất vui lòng chờ từ 2-3 ngày',
         });
-      }
 
-      return {
-        data: result,
-        result: 'RESULT',
-        message: 'Tạo mới đơn hàng  thành công',
-      };
+        console.log(123);
+
+        return {
+          data: result,
+          result: 'SUCCESS',
+          message: 'Tạo mới đơn hàng  thành công',
+        };
+      }
     } catch (error) {
       handlingError('Tạo mới đơn hàng thất bại', error);
     }

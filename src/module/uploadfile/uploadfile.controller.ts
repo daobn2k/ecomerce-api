@@ -54,6 +54,8 @@ export class UploadfileController {
     }),
   )
   async uploadFiles(@UploadedFiles() files: Express.Multer.File[]) {
+    console.log(files, 'files');
+
     const urls = files.map((file) => {
       return `http://localhost:8080/${file.filename}`;
     });

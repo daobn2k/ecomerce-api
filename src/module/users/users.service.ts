@@ -29,6 +29,9 @@ export class UsersService {
             'Tên tài khoản đã có người sử dụng vui lòng sử dụng tên khác',
         };
       }
+
+      console.log(createUserDto, 'createUserDto');
+
       const createdUser = new this.userModel({
         ...createUserDto,
         role: createUserDto.role ?? 'USER',
@@ -36,7 +39,7 @@ export class UsersService {
       const result = await createdUser.save();
       return {
         data: result,
-        result: 'RESULT',
+        result: 'SUCCESS',
         message: 'Tạo mới tài khoản thành công',
       };
     } catch (error) {

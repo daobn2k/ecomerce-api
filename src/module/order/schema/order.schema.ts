@@ -15,6 +15,8 @@ export enum StatusOrder {
 @Schema({ timestamps: true })
 export class Order {
   @Prop()
+  code: string;
+  @Prop()
   items: [OrderItemDocument];
 
   @Prop({ type: Number, default: 1 })

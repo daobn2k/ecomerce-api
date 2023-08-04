@@ -10,6 +10,9 @@ export class Category {
   @Prop({ required: true, type: String, maxlength: 256 })
   name: string;
 
+  @Prop({ required: true, type: String, maxlength: 256 })
+  description: string;
+
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
   create_uid: User;
 }

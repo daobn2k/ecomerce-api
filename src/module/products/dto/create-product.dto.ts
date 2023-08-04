@@ -1,15 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
-import mongoose, { ObjectId } from 'mongoose';
+import { ObjectId } from 'mongoose';
 
 export class CreateProductDto {
   @ApiProperty({ required: true, type: String, maxLength: 256 })
   name: string;
+  @ApiProperty({ required: true, type: String, maxLength: 256 })
+  description: string;
   @ApiProperty({ required: true, type: Number })
   price: number;
-  @ApiProperty({ required: true, type: Number })
-  size: number;
-  @ApiProperty({ required: true, type: String, maxLength: 10 })
-  color: string;
+  // @ApiProperty({ required: true, type: Number })
+  // size: number;
+  // @ApiProperty({ required: true, type: String, maxLength: 10 })
+  // color: string;
   @ApiProperty({ required: true })
   create_uid: ObjectId;
   @ApiProperty({ required: true })
@@ -20,10 +22,8 @@ export class CreateProductDto {
   coverImage: string;
   @ApiProperty({ required: true })
   images: Array<string>;
-
   @ApiProperty({ required: true, default: '1', type: String })
   status: string;
-
   @ApiProperty({ required: false })
   create_date: Date;
 }

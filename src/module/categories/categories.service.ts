@@ -24,10 +24,10 @@ export class CategoriesService {
       return {
         result: 'SUCCESS',
         data: result,
-        message: 'Tạo mới loại sản phẩm thành công',
+        message: 'Tạo mới loại loại sản phẩm thành công',
       };
     } catch (error) {
-      handlingError('Tạo mới loại sản phẩm thất bại', error);
+      handlingError('Tạo mới loại loại sản phẩm thất bại', error);
     }
   }
 
@@ -67,7 +67,7 @@ export class CategoriesService {
         data: result,
       };
     } catch (error) {
-      return handlingError('Không tìm thấy sản phẩm', error);
+      return handlingError('Không tìm thấy loại loại sản phẩm', error);
     }
   }
 
@@ -82,11 +82,11 @@ export class CategoriesService {
       );
       return {
         result: 'SUCCESS',
-        message: 'Chỉnh sửa sản phẩm thành công',
+        message: 'Chỉnh sửa loại sản phẩm thành công',
         data: result,
       };
     } catch (error) {
-      handlingError('Chỉnh sửa sản phẩm thất bại', error);
+      handlingError('Chỉnh sửa loại sản phẩm thất bại', error);
     }
   }
 
@@ -96,10 +96,10 @@ export class CategoriesService {
       return {
         data: res,
         result: 'SUCCESS',
-        message: 'Xóa sản phẩm thành công',
+        message: 'Xóa loại sản phẩm thành công',
       };
     } catch (error) {
-      handlingError('Xóa sản phẩm thất bại', error);
+      handlingError('Xóa loại sản phẩm thất bại', error);
     }
   }
 }
