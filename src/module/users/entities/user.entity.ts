@@ -7,6 +7,6 @@ export class User {
   avatar: string;
   gender: string;
   phone: string;
-  status: boolean;
+  status: string;
   role: string;
 }

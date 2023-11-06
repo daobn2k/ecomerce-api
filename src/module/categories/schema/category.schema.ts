@@ -7,13 +7,13 @@ export type UserDocument = Category & Document;
 
 @Schema({ timestamps: true })
 export class Category {
-  @Prop({ required: true, type: String, maxlength: 256 })
+  @Prop({ required: true, type: String, maxlength: 256, unique: true })
   name: string;
 
-  @Prop({ required: true, type: String, maxlength: 256 })
+  @Prop({ required: false, type: String, maxlength: 256 })
   description: string;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
   create_uid: User;
 }
 export const CategorySchema = SchemaFactory.createForClass(Category);

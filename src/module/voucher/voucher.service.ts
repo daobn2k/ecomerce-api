@@ -20,37 +20,33 @@ export class VoucherService {
     private readonly userService: UsersService,
   ) {}
   async create(CreateVoucherDto: CreateVoucherDto) {
-    try {
-      const code = generateRandomString();
-      const checkUser = await this.userService.findOne(
-        String(CreateVoucherDto.recive_uid),
-      );
+    const code = generateRandomString();
+    const checkUser = await this.userService.findOne(
+      String(CreateVoucherDto.recive_uid),
+    );
 
-      if (!checkUser) return handlingError('Người nhận không tồn tại', null);
+    if (!checkUser) return handlingError('Người nhận không tồn tại', null);
 
-      const createdUser = new this.voucherModel({
-        ...CreateVoucherDto,
-        code,
+    const createdUser = new this.voucherModel({
+      ...CreateVoucherDto,
+      code,
+    });
+
+    const result = await createdUser.save();
+
+    if (result) {
+      await this.mailService.sendEmail({
+        to: checkUser.data.email,
+        subject: result.name,
+        content: `Gửi tặng bạn mã voucher: ${result.code} với ưu đãi cực khủng giám giá tới ${result.discount} VNĐ`,
       });
-
-      const result = await createdUser.save();
-
-      if (result) {
-        await this.mailService.sendEmail({
-          to: checkUser.data.email,
-          subject: result.name,
-          content: `Gửi tặng bạn mã voucher: ${result.code} với ưu đãi cực khủng giám giá tới ${result.discount}%`,
-        });
-      }
-
-      return {
-        data: result,
-        result: 'SUCCESS',
-        message: 'Tạo mới mã ưu đãi thành công',
-      };
-    } catch (error) {
-      handlingError('Tạo mới mã ưu đãi thất bại', error);
     }
+
+    return {
+      data: result,
+      result: 'SUCCESS',
+      message: 'Tạo mới mã ưu đãi thành công',
+    };
   }
 
   async findAll(query: QueryListVoucher) {
@@ -76,7 +72,7 @@ export class VoucherService {
       return {
         result: 'SUCCESS',
         data: res,
-        totalItems: count,
+        total: count,
         page: +page,
         limit: +limit,
       };
@@ -102,22 +98,18 @@ export class VoucherService {
   }
 
   async update(id: string, UpdateVoucherDto: UpdateVoucherDto) {
-    try {
-      const result = await this.voucherModel.findByIdAndUpdate(
-        id,
-        UpdateVoucherDto,
-        {
-          new: true,
-        },
-      );
-      return {
-        result: 'SUCCESS',
-        message: 'Chỉnh sửa mã ưu đãi thành công',
-        data: result,
-      };
-    } catch (error) {
-      handlingError('Chỉnh sửa mã ưu đãi thất bại', error);
-    }
+    const result = await this.voucherModel.findByIdAndUpdate(
+      id,
+      UpdateVoucherDto,
+      {
+        new: true,
+      },
+    );
+    return {
+      result: 'SUCCESS',
+      message: 'Chỉnh sửa mã ưu đãi thành công',
+      data: result,
+    };
   }
 
   async remove(id: string) {

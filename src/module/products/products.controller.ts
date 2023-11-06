@@ -7,11 +7,12 @@ import {
   Param,
   Delete,
   Query,
+  Put,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto, QueryListProducts } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiProperty, ApiTags } from '@nestjs/swagger';
 @ApiTags('Products')
 @Controller('products')
 export class ProductsController {
@@ -32,7 +33,7 @@ export class ProductsController {
     return this.productsService.findOne(id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(@Param('id') id: string, @Body() UpdateProductDto: UpdateProductDto) {
     return this.productsService.update(id, UpdateProductDto);
   }

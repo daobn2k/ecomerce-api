@@ -14,7 +14,7 @@ export class CreateOrderDto {
   total_price: number;
   @ApiProperty({ required: true, default: '', type: String })
   shipping_address: string;
-  @ApiProperty({ required: true, default: StatusOrder.Pending, type: String })
+  @ApiProperty({ required: true, default: StatusOrder.PENDING, type: String })
   status: string;
   @ApiProperty({ required: false, default: '', type: String })
   voucher_code: string;

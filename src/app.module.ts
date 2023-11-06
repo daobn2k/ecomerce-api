@@ -10,9 +10,11 @@ import { ProductsModule } from './module/products/products.module';
 import { UploadfileModule } from './module/uploadfile/uploadfile.module';
 import { UsersModule } from './module/users/users.module';
 import { VoucherModule } from './module/voucher/voucher.module';
+
+const url = 'mongodb://dao:1234@localhost:27017/ecommerce?authSource=admin';
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://127.0.0.1/ecommerce'),
+    MongooseModule.forRoot(url),
     UsersModule,
     ProductsModule,
     CategoriesModule,

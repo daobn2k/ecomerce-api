@@ -9,7 +9,7 @@ export class CreateUserDto {
   avatar: string;
   phone: string;
   gender: string;
-  status: boolean;
+  status: string;
   role: string;
 }
 
@@ -30,8 +30,8 @@ export class PropertyCreateUser {
   avatar: string;
   @ApiProperty({ required: false, default: 'USER' })
   role: string;
-  @ApiProperty({ required: false, default: false })
-  status: boolean;
+  @ApiProperty({ required: false })
+  status: string;
   @ApiProperty({ required: true })
   phone: string;
 }
@@ -55,6 +55,9 @@ export class QueryListUsers {
 
   @ApiProperty({ required: false, type: String, default: '' })
   create_date: string;
+
+  @ApiProperty({ required: false, type: String, default: '' })
+  role: 'USER' | 'ADMIN' | '';
 }
 
 export class ChangePassWordDto {

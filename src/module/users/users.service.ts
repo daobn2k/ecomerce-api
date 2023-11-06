@@ -13,48 +13,46 @@ import { User } from './entities/user.entity';
 
 interface queryUsers {
   name?: any;
+  role?: any;
 }
 @Injectable()
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
   async create(createUserDto: CreateUserDto) {
-    try {
-      const isExistUser = await this.userModel.findOne({
-        username: createUserDto.username,
-      });
+    const isExistUser = await this.userModel.findOne({
+      username: createUserDto.username,
+    });
 
-      if (isExistUser) {
-        return {
-          errorMessage:
-            'Tên tài khoản đã có người sử dụng vui lòng sử dụng tên khác',
-        };
-      }
-
-      console.log(createUserDto, 'createUserDto');
-
-      const createdUser = new this.userModel({
-        ...createUserDto,
-        role: createUserDto.role ?? 'USER',
-      });
-      const result = await createdUser.save();
+    if (isExistUser) {
       return {
-        data: result,
-        result: 'SUCCESS',
-        message: 'Tạo mới tài khoản thành công',
+        data: null,
+        result: 'ERROR',
+        message: 'Tên tài khoản đã có người sử dụng vui lòng sử dụng tên khác',
       };
-    } catch (error) {
-      handlingError('Tạo mới người dùng thất bại', error);
     }
+    const createdUser = new this.userModel({
+      ...createUserDto,
+      role: createUserDto.role ?? 'USER',
+    });
+    const result = await createdUser.save();
+    return {
+      data: result,
+      result: 'SUCCESS',
+      message: 'Tạo mới tài khoản thành công',
+    };
   }
 
   async findAll(query: QueryListUsers) {
-    const { page = 1, limit = 20, keyword = '' } = query;
+    const { page = 1, limit = 20, keyword = '', role } = query;
     const skip: number = (page - 1) * limit;
 
     const listQuery: queryUsers = {};
 
     if (keyword) {
       listQuery.name = rgx(keyword);
+    }
+    if (role) {
+      listQuery.role = rgx(role);
     }
     try {
       const res = await this.userModel
@@ -68,7 +66,7 @@ export class UsersService {
       return {
         result: 'SUCCESS',
         data: res,
-        totalItems: count,
+        total: count,
         page: +page,
         limit: +limit,
       };
@@ -136,7 +134,7 @@ export class UsersService {
       const result = await this.userModel
         .findOneAndUpdate(
           { username: rgx(username), password: rgx(password) },
-          { status: true },
+          { status: '1' },
           { new: true },
         )
         .exec();
@@ -159,7 +157,7 @@ export class UsersService {
       }
       const result = await this.userModel.findOneAndUpdate(
         { _id: body.id },
-        { status: false },
+        { status: '2' },
         { new: true },
       );
       return {
@@ -195,5 +193,9 @@ export class UsersService {
       data: result,
       message: 'Thay đổi mật khẩu thành công',
     };
+  }
+
+  async findOneByUserName(userName: string): Promise<any> {
+    return await this.userModel.findOne({ username: userName });
   }
 }

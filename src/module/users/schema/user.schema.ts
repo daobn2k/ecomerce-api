@@ -32,6 +32,6 @@ export class User {
   email: string;
 
   @Prop()
-  status: boolean;
+  status: string;
 }
 export const UserSchema = SchemaFactory.createForClass(User);

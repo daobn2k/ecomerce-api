@@ -7,9 +7,9 @@ import { OrderItemDocument } from './orderItem.schema';
 export type OrderDocument = Order & Document;
 
 export enum StatusOrder {
-  Pending = 'Pending',
-  Shipped = 'Shipped',
-  Delivered = 'Delivered',
+  PENDING = 'PENDING',
+  SHIPPED = 'SHIPPED',
+  DELIVERED = 'Delivered',
 }
 
 @Schema({ timestamps: true })
@@ -29,8 +29,8 @@ export class Order {
 
   @Prop({
     type: String,
-    default: StatusOrder.Pending,
-    enum: [StatusOrder.Pending, StatusOrder.Delivered, StatusOrder.Shipped],
+    default: StatusOrder.PENDING,
+    enum: [StatusOrder.PENDING, StatusOrder.DELIVERED, StatusOrder.SHIPPED],
   })
   status: string;
 

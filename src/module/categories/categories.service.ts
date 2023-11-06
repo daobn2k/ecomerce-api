@@ -19,16 +19,24 @@ export class CategoriesService {
   ) {}
 
   async create(createCategoryDto: CreateCategoryDto) {
-    try {
-      const result = await this.categoryModel.create(createCategoryDto);
+    const isExistProd = await this.categoryModel.findOne({
+      username: createCategoryDto.name,
+    });
+
+    if (isExistProd) {
       return {
-        result: 'SUCCESS',
-        data: result,
-        message: 'Tạo mới loại loại sản phẩm thành công',
+        data: null,
+        result: 'ERROR',
+        message: 'Tên thể loại sản phẩm đã tồn tại',
       };
-    } catch (error) {
-      handlingError('Tạo mới loại loại sản phẩm thất bại', error);
     }
+
+    const result = await this.categoryModel.create(createCategoryDto);
+    return {
+      result: 'SUCCESS',
+      data: result,
+      message: 'Tạo mới loại loại sản phẩm thành công',
+    };
   }
 
   async findAll(query: QueryListCategories) {

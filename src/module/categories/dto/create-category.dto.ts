@@ -4,9 +4,9 @@ import { ObjectId } from 'mongoose';
 export class CreateCategoryDto {
   @ApiProperty({ required: true })
   name: string;
-  @ApiProperty({ required: true })
+  @ApiProperty({ required: false })
   description: string;
-  @ApiProperty({ required: true })
+  @ApiProperty({ required: false })
   create_uid: ObjectId;
 }
 

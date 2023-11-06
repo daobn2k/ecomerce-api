@@ -13,27 +13,37 @@ export class ProductsService {
   ) {}
 
   async create(CreateProductDto: CreateProductDto) {
-    try {
-      const createdUser = new this.productModel(CreateProductDto);
-      const result = await createdUser.save();
+    const isExistProd = await this.productModel.findOne({
+      username: CreateProductDto.name,
+    });
+
+    if (isExistProd) {
       return {
-        data: result,
-        result: 'SUCCESS',
-        message: 'Tạo mới sản phẩm thành công',
+        data: null,
+        result: 'ERROR',
+        message: 'Tên sản phẩm đã tồn tại',
       };
-    } catch (error) {
-      handlingError('Tạo mới sản phẩm thất bại', error);
     }
+    const createdUser = new this.productModel(CreateProductDto);
+    const result = await createdUser.save();
+    return {
+      data: result,
+      result: 'SUCCESS',
+      message: 'Tạo mới sản phẩm thành công',
+    };
   }
 
   async findAll(query: QueryListProducts) {
-    const { page = 1, limit = 20, keyword = '' } = query;
+    const { page = 1, limit = 20, keyword = '', status } = query;
     const skip: number = (page - 1) * limit;
 
     const listQuery: any = {};
 
     if (keyword) {
       listQuery.name = rgx(keyword);
+    }
+    if (status) {
+      listQuery.status = rgx(status);
     }
     try {
       const res = await this.productModel
@@ -49,7 +59,7 @@ export class ProductsService {
       return {
         result: 'SUCCESS',
         data: res,
-        totalItems: count,
+        total: count,
         page: +page,
         limit: +limit,
       };
@@ -75,34 +85,26 @@ export class ProductsService {
   }
 
   async update(id: string, UpdateProductDto: UpdateProductDto) {
-    try {
-      const result = await this.productModel.findByIdAndUpdate(
-        id,
-        UpdateProductDto,
-        {
-          new: true,
-        },
-      );
-      return {
-        result: 'SUCCESS',
-        message: 'Chỉnh sửa sản phẩm thành công',
-        data: result,
-      };
-    } catch (error) {
-      handlingError('Chỉnh sửa sản phẩm thất bại', error);
-    }
+    const result = await this.productModel.findByIdAndUpdate(
+      id,
+      UpdateProductDto,
+      {
+        new: true,
+      },
+    );
+    return {
+      result: 'SUCCESS',
+      message: 'Chỉnh sửa sản phẩm thành công',
+      data: result,
+    };
   }
 
   async remove(id: string) {
-    try {
-      const res = await this.productModel.findByIdAndDelete(id, { new: true });
-      return {
-        data: res,
-        result: 'SUCCESS',
-        message: 'Xóa sản phẩm thành công',
-      };
-    } catch (error) {
-      handlingError('Xóa sản phẩm thất bại', error);
-    }
+    const res = await this.productModel.findByIdAndDelete(id, { new: true });
+    return {
+      data: res,
+      result: 'SUCCESS',
+      message: 'Xóa sản phẩm thành công',
+    };
   }
 }

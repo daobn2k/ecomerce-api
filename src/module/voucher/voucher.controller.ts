@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Query,
+  Put,
 } from '@nestjs/common';
 import { VoucherService } from './voucher.service';
 import { CreateVoucherDto, QueryListVoucher } from './dto/create-voucher.dto';
@@ -33,7 +34,7 @@ export class VoucherController {
     return this.voucherService.findOne(id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(@Param('id') id: string, @Body() UpdateVoucherDto: UpdateVoucherDto) {
     return this.voucherService.update(id, UpdateVoucherDto);
   }

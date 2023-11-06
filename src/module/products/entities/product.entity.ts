@@ -1,9 +1,10 @@
 import { ObjectId } from 'mongoose';
+import { TProductSize } from '../products.constant';
 
 export class Product {
   name: string;
-  price: number;
-  // size: number;
+  price: string;
+  size: TProductSize[];
   // color: string;
   create_uid: ObjectId;
   origin: string;
@@ -12,4 +13,5 @@ export class Product {
   coverImage: string;
   images: Array<string>;
   description: string;
+  price_amount: string;
 }

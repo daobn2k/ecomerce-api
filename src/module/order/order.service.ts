@@ -70,7 +70,7 @@ export class OrderService {
             { new: true },
           );
 
-          total_price += currentProd.price * element.quantity;
+          total_price += Number(currentProd.price) * element.quantity;
         }
       }
 
@@ -141,7 +141,7 @@ export class OrderService {
       return {
         result: 'SUCCESS',
         data: res,
-        totalItems: count,
+        total: count,
         page: +page,
         limit: +limit,
       };
