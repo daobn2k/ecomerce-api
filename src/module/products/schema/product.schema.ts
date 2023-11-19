@@ -18,7 +18,7 @@ export class Product {
   price: string;
 
   @Prop({ required: false, type: String })
-  price_amount: string;
+  price_discount: string;
 
   @Prop({ required: true, type: String })
   origin: string;

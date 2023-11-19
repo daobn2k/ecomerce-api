@@ -43,4 +43,9 @@ export class VoucherController {
   remove(@Param('id') id: string) {
     return this.voucherService.remove(id);
   }
+
+  @Post('/code')
+  findByCode(@Body() code: string) {
+    return this.voucherService.findByCode(code);
+  }
 }

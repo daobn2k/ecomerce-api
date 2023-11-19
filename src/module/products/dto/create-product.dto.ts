@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ObjectId } from 'mongoose';
 import { EStatus, TProductSize } from '../products.constant';
+import { DISCOUNT, ENumSort } from 'src/constants/interface.constants';
 
 export class CreateProductDto {
   @ApiProperty({ required: true, type: String, maxLength: 256 })
@@ -10,9 +11,11 @@ export class CreateProductDto {
   @ApiProperty({ required: true, type: String })
   price: string;
   @ApiProperty({ required: false, type: String })
-  price_amount: string;
+  price_discount: string;
   @ApiProperty({ required: true })
   create_uid: ObjectId;
+  @ApiProperty({ required: true })
+  category_id: ObjectId;
   @ApiProperty({ required: true, maxLength: 256 })
   origin: string;
   @ApiProperty({ required: true, default: 0, type: Number })
@@ -54,4 +57,14 @@ export class QueryListProducts {
 
   @ApiProperty({ required: false, type: String, default: '' })
   status: string;
+
+  @ApiProperty({ required: false, type: String })
+  category_id: ObjectId;
+
+  @ApiProperty({ required: false, type: String, default: 'created_at' })
+  sort_by: string;
+  @ApiProperty({ required: false, enum: ENumSort, default: ENumSort.DESC })
+  order_by: ENumSort;
+  @ApiProperty({ required: false, enum: DISCOUNT, default: DISCOUNT.ALL })
+  is_discount: DISCOUNT;
 }

@@ -16,12 +16,12 @@ export enum StatusOrder {
 export class Order {
   @Prop()
   code: string;
-  @Prop()
+  @Prop({ required: true })
   items: [OrderItemDocument];
 
-  @Prop({ type: Number, default: 1 })
+  @Prop({ type: Number, default: 0, required: true })
   total_quantity: number;
-  @Prop({ type: Number, default: 0 })
+  @Prop({ type: Number, default: 0, required: true })
   total_price: number;
 
   @Prop({ required: true, type: String, maxLength: 3000, default: '' })
@@ -33,10 +33,9 @@ export class Order {
     enum: [StatusOrder.PENDING, StatusOrder.DELIVERED, StatusOrder.SHIPPED],
   })
   status: string;
-
   @Prop({ type: String })
   voucher_code: string;
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
   create_uid: User;
 }
 export const OrderSchema = SchemaFactory.createForClass(Order);

@@ -96,6 +96,21 @@ export class VoucherService {
       return handlingError('Không tìm thấy mã ưu đãi', error);
     }
   }
+  async findByCode(code: string) {
+    try {
+      const result = await this.voucherModel
+        .findOne({ code: rgx(code), status: true })
+        .populate('create_uid')
+        .populate('recive_uid')
+        .exec();
+      return {
+        result: 'SUCCESS',
+        data: result,
+      };
+    } catch (error) {
+      return handlingError('Không tìm thấy mã ưu đãi', error);
+    }
+  }
 
   async update(id: string, UpdateVoucherDto: UpdateVoucherDto) {
     const result = await this.voucherModel.findByIdAndUpdate(

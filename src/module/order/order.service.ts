@@ -26,13 +26,6 @@ export class OrderService {
 
   async create(createOrderDto: CreateOrderDto) {
     try {
-      let total_price = 0;
-      const total_quantity = createOrderDto.items
-        .map((i) => i.quantity)
-        .reduce((p: any, v: any) => {
-          return p + v;
-        }, 0);
-
       if (!isEmpty(createOrderDto.voucher_code)) {
         const checkVoucher = await this.voucherModel
           .findOne({
@@ -69,15 +62,11 @@ export class OrderService {
             { quantity: newQuantity },
             { new: true },
           );
-
-          total_price += Number(currentProd.price) * element.quantity;
         }
       }
 
       const payload = {
         ...createOrderDto,
-        total_quantity,
-        total_price,
         code: `YANG-${generateRandomString()}`,
       };
       const createdOrder = new this.orderModel(payload);
@@ -95,18 +84,12 @@ export class OrderService {
         );
         if (!findCreateUid)
           return handlingError('Người dùng không tồn tại', null);
-        console.log(123, '123');
-        console.log(findCreateUid, 'findCreateUid');
-
         await this.mailService.sendEmail({
           to: findCreateUid.data.email,
           subject: 'Tạo mới đơn hàng thành công',
           content:
             'Đơn hàng của bạn đã tạo thành công, chúng tôi sẽ liên hệ với bộ phận giao hàng gửi cho bạn trong thời gian sớm nhất vui lòng chờ từ 2-3 ngày',
         });
-
-        console.log(123);
-
         return {
           data: result,
           result: 'SUCCESS',

@@ -10,16 +10,16 @@ export class User {
   @Prop({ required: true, type: String, maxlength: 256 })
   password: string;
 
-  @Prop({ required: true, type: String, maxlength: 256 })
+  @Prop({ required: false, type: String, maxlength: 256 })
   name: string;
 
-  @Prop({ required: true, type: String })
+  @Prop({ required: false, type: String })
   gender: string;
 
-  @Prop({ required: true, type: String, maxlength: 256 })
+  @Prop({ required: false, type: String, maxlength: 256 })
   address: string;
 
-  @Prop({ required: true, type: String, maxlength: 11 })
+  @Prop({ required: false, type: String, maxlength: 11 })
   phone: string;
 
   @Prop()

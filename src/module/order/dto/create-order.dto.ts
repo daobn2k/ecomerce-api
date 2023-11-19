@@ -8,9 +8,9 @@ export class CreateOrderDto {
   code: string;
   @ApiProperty({ required: true, default: [], type: Array })
   items: ProductDocument[];
-  @ApiProperty({ default: 1, type: Number })
+  @ApiProperty({ default: 0, type: Number, required: true })
   total_quantity: number;
-  @ApiProperty({ default: 0, type: Number })
+  @ApiProperty({ default: 0, type: Number, required: true })
   total_price: number;
   @ApiProperty({ required: true, default: '', type: String })
   shipping_address: string;

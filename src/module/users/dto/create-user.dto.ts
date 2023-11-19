@@ -18,13 +18,13 @@ export class PropertyCreateUser {
   username: string;
   @ApiProperty({ required: true })
   password: string;
-  @ApiProperty({ required: true })
+  @ApiProperty({ required: false })
   name: string;
   @ApiProperty({ required: true })
   email: string;
-  @ApiProperty({ required: true })
+  @ApiProperty({ required: false })
   address: string;
-  @ApiProperty({ required: true })
+  @ApiProperty({ required: false })
   gender: string;
   @ApiProperty({ required: false, default: '' })
   avatar: string;
@@ -32,7 +32,7 @@ export class PropertyCreateUser {
   role: string;
   @ApiProperty({ required: false })
   status: string;
-  @ApiProperty({ required: true })
+  @ApiProperty({ required: false })
   phone: string;
 }
 

@@ -5,6 +5,7 @@ import { handlingError, rgx } from 'src/utils/function.utils';
 import { CreateProductDto, QueryListProducts } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './entities/product.entity';
+import { DISCOUNT } from 'src/constants/interface.constants';
 
 @Injectable()
 export class ProductsService {
@@ -34,7 +35,16 @@ export class ProductsService {
   }
 
   async findAll(query: QueryListProducts) {
-    const { page = 1, limit = 20, keyword = '', status } = query;
+    const {
+      page = 1,
+      limit = 20,
+      keyword = '',
+      status,
+      category_id,
+      sort_by,
+      order_by,
+      is_discount,
+    } = query;
     const skip: number = (page - 1) * limit;
 
     const listQuery: any = {};
@@ -45,27 +55,34 @@ export class ProductsService {
     if (status) {
       listQuery.status = rgx(status);
     }
-    try {
-      const res = await this.productModel
-        .find(listQuery)
-        .populate('create_uid')
-        .populate('category_id')
-        .limit(+limit)
-        .skip(skip)
-        .sort({ createdAt: -1 })
-        .exec();
-
-      const count = await this.productModel.find(listQuery).count().exec();
-      return {
-        result: 'SUCCESS',
-        data: res,
-        total: count,
-        page: +page,
-        limit: +limit,
-      };
-    } catch (error) {
-      handlingError('Đã có lỗi xảy ra khi lấy danh sách sản phẩm', error);
+    if (category_id) {
+      listQuery.category_id = category_id;
     }
+    if (is_discount) {
+      if (is_discount === DISCOUNT.DISCOUNT) {
+        listQuery.price_discount = { $exists: true };
+      }
+      if (is_discount === DISCOUNT.NOT_DISCOUNT) {
+        listQuery.price_discount = { $exists: false };
+      }
+    }
+    const res = await this.productModel
+      .find(listQuery)
+      .populate('create_uid')
+      .populate('category_id')
+      .limit(+limit)
+      .skip(skip)
+      .sort({ [sort_by]: order_by })
+      .exec();
+
+    const count = await this.productModel.find(listQuery).count().exec();
+    return {
+      result: 'SUCCESS',
+      data: res,
+      total: count,
+      page: +page,
+      limit: +limit,
+    };
   }
 
   async findOne(id: string) {
