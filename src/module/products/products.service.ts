@@ -92,6 +92,9 @@ export class ProductsService {
         .populate('create_uid')
         .populate('category_id')
         .exec();
+
+      console.log(result, 'result');
+
       return {
         result: 'SUCCESS',
         data: result,

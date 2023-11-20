@@ -1,13 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import {
   generateRandomString,
   handlingError,
   rgx,
 } from 'src/utils/function.utils';
 import { Voucher } from '../voucher/entities/voucher.entity';
-import { CreateOrderDto, QueryListOrder } from './dto/create-order.dto';
+import {
+  CreateOrderDto,
+  QueryListOrder,
+  QueryListProductOrdered,
+} from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { Order } from './entities/order.entity';
 import { isEmpty } from 'lodash';
@@ -102,13 +106,16 @@ export class OrderService {
   }
 
   async findAll(query: QueryListOrder) {
-    const { page = 1, limit = 20, keyword = '' } = query;
+    const { page = 1, limit = 20, keyword = '', created_uid } = query;
     const skip: number = (page - 1) * limit;
 
     const listQuery: any = {};
 
     if (keyword) {
       listQuery.name = rgx(keyword);
+    }
+    if (created_uid) {
+      listQuery.created_uid = created_uid;
     }
     try {
       const res = await this.orderModel
@@ -177,6 +184,41 @@ export class OrderService {
       };
     } catch (error) {
       handlingError('Xóa đơn hàng thất bại', error);
+    }
+  }
+  // sản phẩm đax mua
+  async findAllProductOrdered(body: QueryListProductOrdered) {
+    try {
+      const orders = await this.orderModel
+        .find({ create_uid: new Types.ObjectId(String(body.create_uid)) })
+        .populate('create_uid')
+        .populate({ path: 'items.product', model: 'Product' })
+        .exec();
+
+      const products = orders.reduce((allProducts: any[], order: any) => {
+        const orderProducts = order.items.map((item: any) => {
+          return {
+            orderId: order._id,
+            _id: item.product._id,
+            name: item.product.name,
+            description: item.product.description,
+            images: item.product.images,
+            price: item.product.price,
+            price_discount: item.product.price_discount,
+            order_uid: orders[0].create_uid,
+          };
+        });
+        return allProducts.concat(orderProducts);
+      }, []);
+
+      console.log(products, 'products');
+
+      return {
+        result: 'SUCCESS',
+        data: products,
+      };
+    } catch (error) {
+      handlingError('Đã có lỗi xảy ra khi lấy sản phẩm của người dùng', error);
     }
   }
 }

@@ -9,7 +9,7 @@ export type OrderDocument = Order & Document;
 export enum StatusOrder {
   PENDING = 'PENDING',
   SHIPPED = 'SHIPPED',
-  DELIVERED = 'Delivered',
+  DELIVERED = 'DELIVERED',
 }
 
 @Schema({ timestamps: true })

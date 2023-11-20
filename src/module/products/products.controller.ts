@@ -1,18 +1,17 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
-  Query,
+  Get,
+  Param,
+  Post,
   Put,
+  Query,
 } from '@nestjs/common';
-import { ProductsService } from './products.service';
+import { ApiTags } from '@nestjs/swagger';
 import { CreateProductDto, QueryListProducts } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { ApiProperty, ApiTags } from '@nestjs/swagger';
+import { ProductsService } from './products.service';
 @ApiTags('Products')
 @Controller('products')
 export class ProductsController {
@@ -30,6 +29,8 @@ export class ProductsController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
+    console.log(id, 'id');
+
     return this.productsService.findOne(id);
   }
 

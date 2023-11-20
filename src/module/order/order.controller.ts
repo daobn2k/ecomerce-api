@@ -9,7 +9,11 @@ import {
   Query,
 } from '@nestjs/common';
 import { OrderService } from './order.service';
-import { CreateOrderDto, QueryListOrder } from './dto/create-order.dto';
+import {
+  CreateOrderDto,
+  QueryListOrder,
+  QueryListProductOrdered,
+} from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { ApiTags } from '@nestjs/swagger';
 
@@ -41,5 +45,10 @@ export class OrderController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.orderService.remove(id);
+  }
+
+  @Post('/all-product-ordered')
+  findAllProductOrdered(@Body() body: QueryListProductOrdered) {
+    return this.orderService.findAllProductOrdered(body);
   }
 }
