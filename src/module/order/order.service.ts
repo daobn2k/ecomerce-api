@@ -202,7 +202,7 @@ export class OrderService {
             _id: item.product._id,
             name: item.product.name,
             description: item.product.description,
-            images: item.product.images,
+            coverImage: item.product.coverImage,
             price: item.product.price,
             price_discount: item.product.price_discount,
             order_uid: orders[0].create_uid,
