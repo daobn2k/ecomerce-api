@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Put,
 } from '@nestjs/common';
 import { SettingService } from './setting.service';
 import { CreateSettingDto } from './dto/create-setting.dto';
@@ -32,13 +33,13 @@ export class SettingController {
     return this.settingService.findOne(+id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(@Param('id') id: string, @Body() updateSettingDto: UpdateSettingDto) {
-    return this.settingService.update(+id, updateSettingDto);
+    return this.settingService.update(id, updateSettingDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.settingService.remove(+id);
+    return this.settingService.remove(id);
   }
 }

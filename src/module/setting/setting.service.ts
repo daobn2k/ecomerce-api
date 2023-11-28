@@ -16,22 +16,48 @@ export class SettingService {
 
     console.log(result, 'result');
 
-    return 'This action adds a new setting';
+    return {
+      data: result,
+      result: 'SUCCESS',
+      message: 'Thiế lập thành công',
+    };
   }
 
-  findAll() {
-    return `This action returns all setting`;
+  async findAll() {
+    const result = await this.settingModel.find().exec();
+
+    return {
+      data: result,
+      result: 'SUCCESS',
+      message: 'Thiế lập thành công',
+    };
   }
 
   findOne(id: number) {
     return `This action returns a #${id} setting`;
   }
 
-  update(id: number, updateSettingDto: UpdateSettingDto) {
-    return `This action updates a #${id} setting`;
+  async update(id: string, updateSettingDto: UpdateSettingDto) {
+    const result = await this.settingModel.findByIdAndUpdate(
+      id,
+      updateSettingDto,
+      {
+        new: true,
+      },
+    );
+    return {
+      result: 'SUCCESS',
+      message: 'Chỉnh sửa người dùng thành công',
+      data: result,
+    };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} setting`;
+  async remove(id: string) {
+    const res = await this.settingModel.findByIdAndDelete(id, { new: true });
+    return {
+      data: res,
+      result: 'SUCCESS',
+      message: 'Xóa người dùng thành công',
+    };
   }
 }
