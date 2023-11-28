@@ -5,7 +5,8 @@ import { handlingError, rgx } from 'src/utils/function.utils';
 import { CreateProductDto, QueryListProducts } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './entities/product.entity';
-import { DISCOUNT } from 'src/constants/interface.constants';
+import { DISCOUNT, ENumSort } from 'src/constants/interface.constants';
+import { startOfDay, endOfDay } from 'date-fns';
 
 @Injectable()
 export class ProductsService {
@@ -41,9 +42,11 @@ export class ProductsService {
       keyword = '',
       status,
       category_id,
-      sort_by,
-      order_by,
+      sort_by = 'createdAt',
+      order_by = ENumSort.DESC,
       is_discount,
+      start_created_date,
+      end_created_date,
     } = query;
     const skip: number = (page - 1) * limit;
 
@@ -65,6 +68,12 @@ export class ProductsService {
       if (is_discount === DISCOUNT.NOT_DISCOUNT) {
         listQuery.price_discount = { $exists: false };
       }
+    }
+    if (start_created_date && end_created_date) {
+      listQuery.createdAt = {
+        $gte: startOfDay(new Date(start_created_date)),
+        $lte: endOfDay(new Date(end_created_date)),
+      };
     }
     const res = await this.productModel
       .find(listQuery)

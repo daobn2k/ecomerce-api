@@ -55,6 +55,10 @@ export class QueryListProducts {
   @ApiProperty({ required: false, type: String, default: '' })
   create_date: string;
 
+  @ApiProperty({ required: false, type: String })
+  start_created_date: string;
+  @ApiProperty({ required: false, type: String })
+  end_created_date: string;
   @ApiProperty({ required: false, type: String, default: '' })
   status: string;
 

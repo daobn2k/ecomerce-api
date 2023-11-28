@@ -8,9 +8,10 @@ import {
 } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Category } from './entities/category.entity';
-
+import { startOfDay, endOfDay } from 'date-fns';
 interface queryCategories {
   name?: any;
+  createdAt?: any;
 }
 @Injectable()
 export class CategoriesService {
@@ -40,13 +41,25 @@ export class CategoriesService {
   }
 
   async findAll(query: QueryListCategories) {
-    const { page = 1, limit = 20, keyword = '' } = query;
+    const {
+      page = 1,
+      limit = 20,
+      keyword = '',
+      start_created_date,
+      end_created_date,
+    } = query;
     const skip: number = (page - 1) * limit;
 
     const listQuery: queryCategories = {};
 
     if (keyword) {
       listQuery.name = rgx(keyword);
+    }
+    if (start_created_date && end_created_date) {
+      listQuery.createdAt = {
+        $gte: startOfDay(new Date(start_created_date)),
+        $lte: endOfDay(new Date(end_created_date)),
+      };
     }
     try {
       const res = await this.categoryModel

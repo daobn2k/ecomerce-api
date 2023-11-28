@@ -10,10 +10,12 @@ import {
 } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+import { ENumSort } from 'src/constants/interface.constants';
 
 interface queryUsers {
   name?: any;
   role?: any;
+  createdAt?: any;
 }
 @Injectable()
 export class UsersService {
@@ -43,7 +45,16 @@ export class UsersService {
   }
 
   async findAll(query: QueryListUsers) {
-    const { page = 1, limit = 20, keyword = '', role } = query;
+    const {
+      page = 1,
+      limit = 20,
+      keyword = '',
+      role,
+      start_created_date,
+      end_created_date,
+      sort_by = 'createdAt',
+      order_by = ENumSort.DESC,
+    } = query;
     const skip: number = (page - 1) * limit;
 
     const listQuery: queryUsers = {};
@@ -54,12 +65,18 @@ export class UsersService {
     if (role) {
       listQuery.role = rgx(role);
     }
+    if (start_created_date && end_created_date) {
+      listQuery.createdAt = {
+        $gte: new Date(start_created_date),
+        $lte: new Date(end_created_date),
+      };
+    }
     try {
       const res = await this.userModel
         .find(listQuery)
         .limit(+limit)
         .skip(skip)
-        .sort({ createdAt: -1 })
+        .sort({ [sort_by]: order_by })
         .exec();
 
       const count = await this.userModel.find(listQuery).count().exec();

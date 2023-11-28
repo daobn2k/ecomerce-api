@@ -1,21 +1,21 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Post,
+  Put,
   Query,
 } from '@nestjs/common';
-import { OrderService } from './order.service';
+import { ApiTags } from '@nestjs/swagger';
 import {
   CreateOrderDto,
   QueryListOrder,
   QueryListProductOrdered,
 } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { OrderService } from './order.service';
 
 @ApiTags('order')
 @Controller('order')
@@ -37,7 +37,7 @@ export class OrderController {
     return this.orderService.findOne(id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(@Param('id') id: string, @Body() UpdateOrderDto: UpdateOrderDto) {
     return this.orderService.update(id, UpdateOrderDto);
   }

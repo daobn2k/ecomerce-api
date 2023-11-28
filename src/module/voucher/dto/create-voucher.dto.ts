@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ObjectId } from 'mongoose';
+import { ENumSort } from 'src/constants/interface.constants';
 
 export class CreateVoucherDto {
   @ApiProperty({ type: String, default: '', required: true })
@@ -30,4 +31,15 @@ export class QueryListVoucher {
 
   @ApiProperty({ required: false, type: String, default: '' })
   create_date: string;
+
+  @ApiProperty({ required: false, type: String })
+  start_created_date: string;
+
+  @ApiProperty({ required: false, type: String })
+  end_created_date: string;
+
+  @ApiProperty({ required: false, type: String, default: 'created_at' })
+  sort_by: string;
+  @ApiProperty({ required: false, enum: ENumSort, default: ENumSort.DESC })
+  order_by: ENumSort;
 }

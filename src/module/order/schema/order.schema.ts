@@ -10,6 +10,7 @@ export enum StatusOrder {
   PENDING = 'PENDING',
   SHIPPED = 'SHIPPED',
   DELIVERED = 'DELIVERED',
+  CANCEL = 'CANCEL',
 }
 
 @Schema({ timestamps: true })

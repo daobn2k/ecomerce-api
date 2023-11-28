@@ -11,6 +11,8 @@ import { UsersService } from '../users/users.service';
 import { CreateVoucherDto, QueryListVoucher } from './dto/create-voucher.dto';
 import { UpdateVoucherDto } from './dto/update-voucher.dto';
 import { Voucher } from './entities/voucher.entity';
+import { startOfDay, endOfDay } from 'date-fns';
+import { ENumSort } from 'src/constants/interface.constants';
 
 @Injectable()
 export class VoucherService {
@@ -50,13 +52,27 @@ export class VoucherService {
   }
 
   async findAll(query: QueryListVoucher) {
-    const { page = 1, limit = 20, keyword = '' } = query;
+    const {
+      page = 1,
+      limit = 20,
+      keyword = '',
+      start_created_date,
+      end_created_date,
+      sort_by = 'createdAt',
+      order_by = ENumSort.DESC,
+    } = query;
     const skip: number = (page - 1) * limit;
 
     const listQuery: any = {};
 
     if (keyword) {
       listQuery.name = rgx(keyword);
+    }
+    if (start_created_date && end_created_date) {
+      listQuery.createdAt = {
+        $gte: startOfDay(new Date(start_created_date)),
+        $lte: endOfDay(new Date(end_created_date)),
+      };
     }
     try {
       const res = await this.voucherModel
@@ -65,7 +81,7 @@ export class VoucherService {
         .populate('recive_uid')
         .limit(+limit)
         .skip(skip)
-        .sort({ createdAt: -1 })
+        .sort({ [sort_by]: order_by })
         .exec();
 
       const count = await this.voucherModel.find(listQuery).count().exec();

@@ -23,6 +23,11 @@ export class CreateOrderDto {
   create_uid: ObjectId;
 }
 
+export class actionDto {
+  @ApiProperty({ required: true, type: String })
+  order_id: ObjectId;
+}
+
 export class QueryListOrder {
   @ApiProperty({ required: false })
   page: number;
@@ -42,6 +47,13 @@ export class QueryListOrder {
   order_by: ENumSort;
   @ApiProperty({ required: false, type: String })
   created_uid: ObjectId;
+  @ApiProperty({ required: false, enum: StatusOrder })
+  status: StatusOrder;
+
+  @ApiProperty({ required: false, type: String })
+  start_created_date: string;
+  @ApiProperty({ required: false, type: String })
+  end_created_date: string;
 }
 
 export class QueryListProductOrdered {

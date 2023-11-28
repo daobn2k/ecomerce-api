@@ -11,6 +11,7 @@ import {
   CreateOrderDto,
   QueryListOrder,
   QueryListProductOrdered,
+  actionDto,
 } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { Order } from './entities/order.entity';
@@ -18,6 +19,9 @@ import { isEmpty } from 'lodash';
 import { Product } from '../products/entities/product.entity';
 import { MailService } from '../mail/mail.service';
 import { UsersService } from '../users/users.service';
+import { startOfDay, endOfDay } from 'date-fns';
+import { ENumSort } from 'src/constants/interface.constants';
+
 @Injectable()
 export class OrderService {
   constructor(
@@ -106,7 +110,17 @@ export class OrderService {
   }
 
   async findAll(query: QueryListOrder) {
-    const { page = 1, limit = 20, keyword = '', created_uid } = query;
+    const {
+      page = 1,
+      limit = 20,
+      keyword = '',
+      created_uid,
+      status,
+      start_created_date,
+      end_created_date,
+      sort_by = 'createdAt',
+      order_by = ENumSort.DESC,
+    } = query;
     const skip: number = (page - 1) * limit;
 
     const listQuery: any = {};
@@ -117,6 +131,15 @@ export class OrderService {
     if (created_uid) {
       listQuery.created_uid = created_uid;
     }
+    if (status) {
+      listQuery.status = rgx(status);
+    }
+    if (start_created_date && end_created_date) {
+      listQuery.createdAt = {
+        $gte: startOfDay(new Date(start_created_date)),
+        $lte: endOfDay(new Date(end_created_date)),
+      };
+    }
     try {
       const res = await this.orderModel
         .find(listQuery)
@@ -124,7 +147,7 @@ export class OrderService {
         .populate({ path: 'items.product', model: 'Product' })
         .limit(+limit)
         .skip(skip)
-        .sort({ createdAt: -1 })
+        .sort({ [sort_by]: order_by })
         .exec();
 
       const count = await this.orderModel.find(listQuery).count().exec();

@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { ENumSort } from 'src/constants/interface.constants';
 
 export class CreateUserDto {
   username: string;
@@ -58,6 +59,17 @@ export class QueryListUsers {
 
   @ApiProperty({ required: false, type: String, default: '' })
   role: 'USER' | 'ADMIN' | '';
+
+  @ApiProperty({ required: false, type: String })
+  start_created_date: string;
+
+  @ApiProperty({ required: false, type: String })
+  end_created_date: string;
+
+  @ApiProperty({ required: false, type: String, default: 'created_at' })
+  sort_by: string;
+  @ApiProperty({ required: false, enum: ENumSort, default: ENumSort.DESC })
+  order_by: ENumSort;
 }
 
 export class ChangePassWordDto {
