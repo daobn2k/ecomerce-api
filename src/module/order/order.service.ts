@@ -21,6 +21,7 @@ import { MailService } from '../mail/mail.service';
 import { UsersService } from '../users/users.service';
 import { startOfDay, endOfDay } from 'date-fns';
 import { ENumSort } from 'src/constants/interface.constants';
+import { StatusOrder } from './schema/order.schema';
 
 @Injectable()
 export class OrderService {
@@ -165,6 +166,52 @@ export class OrderService {
 
   async update(id: string, UpdateOrderDto: UpdateOrderDto) {
     try {
+      const orderDetail: any = await this.orderModel
+        .findOne({ _id: id })
+        .populate('create_uid')
+        .exec();
+
+      const emailOrder = orderDetail.create_uid?.email;
+
+      if (!emailOrder) {
+        return {
+          result: 'ERROR',
+          message: 'Không tìm thấy email người đặt',
+          data: undefined,
+        };
+      }
+      if (UpdateOrderDto.status === StatusOrder.SHIPPED) {
+        await this.mailService.sendEmail({
+          to: emailOrder,
+          subject: 'Thông báo chuyển ship',
+          content: `Mã đơn hàng ${orderDetail.code} của bạn đã chuyển ship , vui lòng chờ nhận hàng mọi thắc mắc xin liên hệ vào hotline`,
+        });
+      }
+      if (UpdateOrderDto.status === StatusOrder.CANCEL) {
+        await this.mailService.sendEmail({
+          to: emailOrder,
+          subject: 'Hủy đơn hàng',
+          content: `Mã đơn hàng ${orderDetail.code} của bạn đã hủy`,
+        });
+
+        await this.mailService.sendEmail({
+          to: 'vvdao096@gmail.com',
+          subject: 'Hủy đơn hàng',
+          content: `Mã đơn hàng ${orderDetail.code} đã bị hủy`,
+        });
+      }
+      if (UpdateOrderDto.status === StatusOrder.DELIVERED) {
+        await this.mailService.sendEmail({
+          to: emailOrder,
+          subject: 'Giao hàng thành công',
+          content: `Cảm ơn bạn vì đã đặt hàng tại cửa hàng chúng tôi, chúc bạn và gia đình mạnh khỏe`,
+        });
+        await this.mailService.sendEmail({
+          to: 'vvdao096@gmail.com',
+          subject: 'Thanh toán thành công',
+          content: `Mã đơn hàng ${orderDetail.code} đã thanh toán thành công`,
+        });
+      }
       const result = await this.orderModel.findByIdAndUpdate(
         id,
         UpdateOrderDto,

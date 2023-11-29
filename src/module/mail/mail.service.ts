@@ -14,7 +14,6 @@ export class MailService {
       subject,
       text: content,
     });
-
     console.log(res, 'res');
 
     return 'This Send Success';
