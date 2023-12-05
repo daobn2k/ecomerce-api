@@ -35,7 +35,7 @@ export class ProductsService {
     };
   }
 
-  async findAll(query: QueryListProducts) {
+  async findAll(query?: QueryListProducts) {
     const {
       page = 1,
       limit = 20,
@@ -101,8 +101,6 @@ export class ProductsService {
         .populate('create_uid')
         .populate('category_id')
         .exec();
-
-      console.log(result, 'result');
 
       return {
         result: 'SUCCESS',

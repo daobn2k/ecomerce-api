@@ -11,8 +11,11 @@ import { UploadfileModule } from './module/uploadfile/uploadfile.module';
 import { UsersModule } from './module/users/users.module';
 import { VoucherModule } from './module/voucher/voucher.module';
 import { SettingModule } from './module/setting/setting.module';
+import { NotificationModule } from './module/notification/notification.module';
+import { OrderService } from './module/order/order.service';
+import { GeneralReportModule } from './module/general-report/general-report.module';
 
-const url = 'mongodb://dao:1234@localhost:27017/ecommerce?authSource=admin';
+const url = 'mongodb://localhost:27017/ecommerce';
 @Module({
   imports: [
     MongooseModule.forRoot(url),
@@ -25,6 +28,8 @@ const url = 'mongodb://dao:1234@localhost:27017/ecommerce?authSource=admin';
     VoucherModule,
     MailModule,
     SettingModule,
+    NotificationModule,
+    GeneralReportModule,
   ],
   controllers: [AppController],
   providers: [AppService],

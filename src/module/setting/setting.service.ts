@@ -14,8 +14,6 @@ export class SettingService {
   async create(data: CreateSettingDto) {
     const result = await this.settingModel.create(data);
 
-    console.log(result, 'result');
-
     return {
       data: result,
       result: 'SUCCESS',

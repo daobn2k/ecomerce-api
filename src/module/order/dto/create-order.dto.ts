@@ -30,30 +30,30 @@ export class actionDto {
 
 export class QueryListOrder {
   @ApiProperty({ required: false })
-  page: number;
+  page?: number;
 
   @ApiProperty({ required: false })
-  limit: number;
+  limit?: number;
 
   @ApiProperty({ required: false, type: String })
-  keyword: string;
+  keyword?: string;
 
   @ApiProperty({ required: false, type: String, default: '' })
-  create_date: string;
+  create_date?: string;
 
   @ApiProperty({ required: false, type: String, default: 'created_at' })
-  sort_by: string;
+  sort_by?: string;
   @ApiProperty({ required: false, enum: ENumSort, default: ENumSort.DESC })
-  order_by: ENumSort;
+  order_by?: ENumSort;
   @ApiProperty({ required: false, type: String })
-  created_uid: ObjectId;
+  created_uid?: ObjectId;
   @ApiProperty({ required: false, enum: StatusOrder })
-  status: StatusOrder;
+  status?: StatusOrder;
 
   @ApiProperty({ required: false, type: String })
-  start_created_date: string;
+  start_created_date?: string;
   @ApiProperty({ required: false, type: String })
-  end_created_date: string;
+  end_created_date?: string;
 }
 
 export class QueryListProductOrdered {

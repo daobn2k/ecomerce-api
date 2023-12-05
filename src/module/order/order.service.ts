@@ -281,8 +281,6 @@ export class OrderService {
         return allProducts.concat(orderProducts);
       }, []);
 
-      console.log(products, 'products');
-
       return {
         result: 'SUCCESS',
         data: products,

@@ -33,5 +33,7 @@ export class User {
 
   @Prop()
   status: string;
+  @Prop({ type: String })
+  fcm_token: string;
 }
 export const UserSchema = SchemaFactory.createForClass(User);
